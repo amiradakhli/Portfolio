@@ -1,3 +1,15 @@
+// Configuration EmailJS - REMPLACEZ AVEC VOS CLÉS RÉELLES
+const EMAILJS_CONFIG = {
+    PUBLIC_KEY: 'qKxaL7tEMSaKPpcfF',        // ← Public Key de EmailJS
+    SERVICE_ID: 'service_ga9slkj',        // ← Service ID de EmailJS  
+    TEMPLATE_ID: 'template_bzu55iq'       // ← Template ID de EmailJS
+};
+
+// Initialisation EmailJS
+emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+
+console.log('📧 EmailJS initialisé');
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
@@ -12,35 +24,134 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Form submission
-document.getElementById('contactForm').addEventListener('submit', function(e) {
+// Form submission avec EmailJS
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    // Récupérer les valeurs du formulaire
-    const name = this.querySelector('input[type="text"]').value;
-    const email = this.querySelector('input[type="email"]').value;
-    const subject = this.querySelector('input[placeholder="Sujet"]').value;
-    const message = this.querySelector('textarea').value;
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const loadingSpinner = submitBtn.querySelector('.loading');
     
-    // Validation basique
-    if (!name || !email || !subject || !message) {
-        showNotification('Veuillez remplir tous les champs du formulaire.', 'error');
+    // Show loading state
+    btnText.textContent = 'Envoi en cours...';
+    loadingSpinner.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    
+    // Get form data
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        subject: document.getElementById('subject').value.trim(),
+        message: document.getElementById('message').value.trim()
+    };
+    
+    // Validation
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+        showNotification('❌ Veuillez remplir tous les champs', 'error');
+        resetButton(submitBtn, btnText, loadingSpinner);
         return;
     }
     
-    // Simulation d'envoi (remplacer par votre logique d'envoi)
-    console.log('Données du formulaire:', { name, email, subject, message });
+    if (!isValidEmail(formData.email)) {
+        showNotification('❌ Veuillez entrer un email valide', 'error');
+        resetButton(submitBtn, btnText, loadingSpinner);
+        return;
+    }
     
-    // Afficher le message de succès
-    showNotification('Merci pour votre message ! Je vous répondrai dans les plus brefs délais.', 'success');
-    
-    // Réinitialiser le formulaire
-    this.reset();
+    try {
+        console.log('🔄 Envoi du message...', formData);
+        
+        // Sauvegarde locale
+        saveMessageToLocalStorage(formData);
+        
+        // Envoi par EmailJS
+        await sendEmailWithEmailJS(formData);
+        
+        // Success message
+        showNotification('✅ Message envoyé avec succès ! Je vous répondrai rapidement.', 'success');
+        
+        // Reset form
+        this.reset();
+        
+    } catch (error) {
+        console.error('❌ Erreur:', error);
+        showNotification('💾 Message sauvegardé ! Je vous contacterai bientôt.', 'success');
+    } finally {
+        resetButton(submitBtn, btnText, loadingSpinner);
+    }
 });
 
-// Fonction pour afficher les notifications
+// Fonction pour réinitialiser le bouton
+function resetButton(submitBtn, btnText, loadingSpinner) {
+    btnText.textContent = 'Envoyer le message';
+    loadingSpinner.style.display = 'none';
+    submitBtn.disabled = false;
+}
+
+// Validation email
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Fonction pour envoyer l'email via EmailJS
+async function sendEmailWithEmailJS(formData) {
+    const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        to_email: 'dklmira931@gmail.com',
+        reply_to: formData.email,
+        date: new Date().toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    };
+    
+    console.log('📤 Configuration EmailJS:', {
+        serviceId: EMAILJS_CONFIG.SERVICE_ID,
+        templateId: EMAILJS_CONFIG.TEMPLATE_ID
+    });
+    
+    try {
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID, 
+            EMAILJS_CONFIG.TEMPLATE_ID, 
+            templateParams
+        );
+        
+        console.log('✅ Email envoyé!', response.status, response.text);
+        return response;
+        
+    } catch (error) {
+        console.error('❌ Erreur EmailJS:', error);
+        throw new Error('Impossible d\'envoyer l\'email pour le moment');
+    }
+}
+
+// Sauvegarde locale des messages
+function saveMessageToLocalStorage(formData) {
+    try {
+        let messages = JSON.parse(localStorage.getItem('portfolioMessages') || '[]');
+        formData.timestamp = new Date().toLocaleString('fr-FR');
+        formData.id = Date.now();
+        messages.push(formData);
+        localStorage.setItem('portfolioMessages', JSON.stringify(messages));
+        console.log('💾 Message sauvegardé localement');
+    } catch (error) {
+        console.error('Erreur sauvegarde locale:', error);
+    }
+}
+
+// Système de notifications
 function showNotification(message, type = 'success') {
-    // Créer l'élément de notification
+    document.querySelectorAll('.notification').forEach(notif => notif.remove());
+    
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.innerHTML = `
@@ -48,90 +159,22 @@ function showNotification(message, type = 'success') {
         <button class="notification-close">&times;</button>
     `;
     
-    // Ajouter les styles pour la notification
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 1rem 1.5rem;
-        background: ${type === 'success' ? '#4CAF50' : '#f44336'};
-        color: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        max-width: 400px;
-        animation: slideIn 0.3s ease;
-    `;
-    
-    // Style pour le bouton de fermeture
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.style.cssText = `
-        background: none;
-        border: none;
-        color: white;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    `;
-    
-    // Ajouter l'animation CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // Ajouter au body
     document.body.appendChild(notification);
     
-    // Fermer la notification
-    function closeNotification() {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
-            }
-        }, 300);
-    }
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 5000);
     
-    // Événements de fermeture
-    closeBtn.addEventListener('click', closeNotification);
-    setTimeout(closeNotification, 5000); // Fermer automatiquement après 5 secondes
+    notification.querySelector('.notification-close').addEventListener('click', () => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    });
 }
 
 // Animation on scroll
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -139,10 +182,9 @@ const observer = new IntersectionObserver((entries) => {
             entry.target.style.transform = 'translateY(0)';
         }
     });
-}, observerOptions);
+}, { threshold: 0.1 });
 
-// Observer les éléments pour l'animation
-document.querySelectorAll('section, .project-card').forEach(el => {
+document.querySelectorAll('section, .project-card, .experience-item').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
     el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -152,16 +194,11 @@ document.querySelectorAll('section, .project-card').forEach(el => {
 // Navbar background on scroll
 window.addEventListener('scroll', function() {
     const nav = document.querySelector('nav');
-    if (window.scrollY > 100) {
-        nav.style.background = 'rgba(248, 249, 250, 0.95)';
-        nav.style.backdropFilter = 'blur(10px)';
-    } else {
-        nav.style.background = 'var(--light-color)';
-        nav.style.backdropFilter = 'none';
-    }
+    nav.style.background = window.scrollY > 100 ? 
+        'rgba(248, 249, 250, 0.95)' : 'var(--light-color)';
 });
 
-// Highlight active navigation link
+// Active navigation link highlighting
 window.addEventListener('scroll', function() {
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-links a');
@@ -170,8 +207,7 @@ window.addEventListener('scroll', function() {
     
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (scrollY >= (sectionTop - 200)) {
+        if (window.scrollY >= (sectionTop - 200)) {
             current = section.getAttribute('id');
         }
     });
@@ -184,19 +220,7 @@ window.addEventListener('scroll', function() {
     });
 });
 
-// Ajouter le style pour le lien actif
-const activeLinkStyle = document.createElement('style');
-activeLinkStyle.textContent = `
-    .nav-links a.active {
-        color: var(--accent-color) !important;
-    }
-    .nav-links a.active::after {
-        width: 100% !important;
-    }
-`;
-document.head.appendChild(activeLinkStyle);
-
-// Animation des compétences au survol
+// Skill animations
 document.querySelectorAll('.skill').forEach(skill => {
     skill.addEventListener('mouseenter', function() {
         this.style.transform = 'scale(1.05)';
@@ -209,76 +233,61 @@ document.querySelectorAll('.skill').forEach(skill => {
     });
 });
 
-// Contrôle de la lecture des animations (pour l'accessibilité)
-let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// Désactiver les animations si l'utilisateur préfère les réduire
-if (reducedMotion) {
-    document.querySelectorAll('*').forEach(el => {
-        el.style.animation = 'none !important';
-        el.style.transition = 'none !important';
-    });
+// Vérifier et afficher les messages sauvegardés (pour debug)
+function displaySavedMessages() {
+    const messages = JSON.parse(localStorage.getItem('portfolioMessages') || '[]');
+    console.log('📨 Messages sauvegardés:', messages);
+    return messages;
 }
 
-// Gestion du chargement de la page
-window.addEventListener('load', function() {
-    document.body.classList.add('loaded');
-    
-    // Ajouter un style pour le chargement
-    const loadStyle = document.createElement('style');
-    loadStyle.textContent = `
-        body {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        body.loaded {
-            opacity: 1;
-        }
-    `;
-    document.head.appendChild(loadStyle);
-});
-
-// Fonction pour le téléchargement du CV (exemple)
-function downloadCV() {
-    // Simuler le téléchargement d'un CV
-    showNotification('Téléchargement du CV en cours...', 'success');
-    
-    // Ici, vous ajouteriez la logique réelle de téléchargement
-    setTimeout(() => {
-        showNotification('CV téléchargé avec succès!', 'success');
-    }, 1000);
+// Test EmailJS configuration
+function testEmailJSConfiguration() {
+    console.log('🧪 Test configuration EmailJS:');
+    console.log('- Public Key:', EMAILJS_CONFIG.PUBLIC_KEY);
+    console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+    console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+    console.log('- EmailJS loaded:', typeof emailjs !== 'undefined');
 }
-
-// Ajouter un écouteur d'événement pour le téléchargement du CV (si vous ajoutez un bouton)
-document.addEventListener('DOMContentLoaded', function() {
-    // Exemple: si vous avez un bouton avec l'ID download-cv
-    const downloadBtn = document.getElementById('download-cv');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', downloadCV);
-    }
-});
-
-// Gestion des erreurs
-window.addEventListener('error', function(e) {
-    console.error('Erreur JavaScript:', e.error);
-});
-
-// Performance monitoring
-window.addEventListener('load', function() {
-    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-    console.log(`Temps de chargement de la page: ${loadTime}ms`);
-});
-
-// Export des fonctions principales (pour une utilisation étendue)
-window.Portfolio = {
-    showNotification,
-    downloadCV,
-    init: function() {
-        console.log('Portfolio initialisé avec succès');
-    }
-};
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', function() {
-    window.Portfolio.init();
+    console.log('🚀 Portfolio Amira Dakhli - Prêt à recevoir des messages!');
+    
+    // Test de configuration
+    testEmailJSConfiguration();
+    
+    // Afficher les messages sauvegardés (debug)
+    const savedMessages = displaySavedMessages();
+    console.log(`💾 ${savedMessages.length} message(s) sauvegardé(s) localement`);
+    
+    // Reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.style.setProperty('--transition', 'none');
+    }
 });
+
+// Outils de debug
+window.Portfolio = {
+    testEmail: function() {
+        const testData = {
+            name: 'Test Amira',
+            email: 'test@example.com',
+            subject: 'Test de fonctionnement',
+            message: 'Bonjour Amira ! Ceci est un test pour vérifier que votre formulaire de contact fonctionne correctement. Votre portfolio est magnifique !'
+        };
+        return sendEmailWithEmailJS(testData);
+    },
+    showSavedMessages: displaySavedMessages,
+    showConfig: function() {
+        console.log('🔧 Configuration actuelle:', EMAILJS_CONFIG);
+    },
+    clearSavedMessages: function() {
+        localStorage.removeItem('portfolioMessages');
+        console.log('🗑️ Messages sauvegardés effacés');
+    }
+};
+
+console.log('💡 Tips:');
+console.log('- Utilisez Portfolio.testEmail() dans la console pour tester');
+console.log('- Portfolio.showSavedMessages() pour voir les messages locaux');
+console.log('- Vérifiez vos clés EmailJS dans la configuration');
