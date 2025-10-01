@@ -3,46 +3,276 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio Amira Dakhli</title>
+  <title>Portfolio | Amira Dakhli - ICT Student & Web Developer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Ajout d'EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="logo">Amira Dakhli</div>
+      <div class="nav-links">
+        <a href="#about">À propos</a>
+        <a href="#experience">Expériences</a>
+        <a href="#education">Formation</a>
+        <a href="#projects">Projets</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
   <header>
-    <h1>Amira Dakhli</h1>
-    <p>IoT Developer | Web & Embedded Systems</p>
+    <div class="header-content">
+      <div class="profile-img">
+        <i class="fas fa-laptop-code"></i>
+      </div>
+      <h1>Amira Dakhli</h1>
+      <p class="tagline">Développeuse ICT | Développement Web | Projets Innovants & Embedded Systems</p>
+      <p>Étudiante en TIC et développeuse IoT, spécialisée dans les systèmes embarqués et applications web.</p>
+      <div class="cta-buttons">
+        <a href="#projects" class="btn">Voir mes projets</a>
+        <a href="#contact" class="btn btn-secondary">Me contacter</a>
+      </div>
+    </div>
   </header>
 
-  <section id="about">
-    <h2>À propos</h2>
-    <p>Étudiante en TIC et développeuse IoT, spécialisée dans les systèmes embarqués et applications web.</p>
-  </section>
+  <!-- Main Content -->
+  <main>
+    <!-- About Section -->
+    <section id="about">
+      <div class="section-header">
+        <h2>À propos</h2>
+      </div>
+      <div class="about-content">
+        <div class="about-text">
+            <p>Je suis une développeuse passionnée par l'Internet des Objets (IoT) et les systèmes embarqués. Actuellement étudiante en Technologies de l'Information et de la Communication, je me spécialise dans le développement de solutions connectées innovantes.</p>
+            <p>Mon expertise couvre la programmation de microcontrôleurs, le développement d'applications web en temps réel, et l'intégration de capteurs pour créer des systèmes intelligents et connectés.</p>
+          <div class="skills">
+            <span class="skill">C++</span>
+            <span class="skill">Python</span>
+            <span class="skill">Java</span>
+            <span class="skill">HTML/CSS</span>
+            <span class="skill">JavaScript</span>
+            <span class="skill">Node.js</span>
+            <span class="skill">Vue.js</span>
+            <span class="skill">Firebase</span>
+            <span class="skill">VS Code</span>
+            <span class="skill">GitHub</span>
+            <span class="skill">Packet Tracer</span>
+            <span class="skill">MATLAB</span>
+            <span class="skill">IoT</span>
+            <span class="skill">Systèmes Embarqués</span>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="visual-icon">
+            <i class="fas fa-microchip"></i>
+          </div>
+          <h3>Technologies IoT</h3>
+          <p>Développement de systèmes connectés avec capteurs et communication sans fil</p>
+        </div>
+      </div>
+    </section>
 
-  <section id="projects">
-    <h2>Projets</h2>
-    <div class="project">
-      <h3>Système de détection d’incendies IoT</h3>
-      <p>ESP32 + LoRa + capteurs CO/CO₂ + Interface Web temps réel avec Firebase</p>
-    </div>
-    <div class="project">
-      <h3>Site Web Dynamique</h3>
-      <p>Page web avec lecture de données en temps réel depuis Firebase</p>
-    </div>
-  </section>
+    <!-- Experience Section -->
+    <section id="experience">
+      <div class="section-header">
+        <h2>Expériences & Projets</h2>
+      </div>
+      <div class="experience-timeline">
+        <div class="experience-item">
+          <h3>Stage – Université privée TEK-UP : Réseaux et IT</h3>
+          <ul>
+            <li>Analyse et gestion des structures réseau, switches, IP et protocoles TCP/IP</li>
+            <li>Étude des topologies réseau et présentation du réseau local</li>
+            <li>Configuration et maintenance d'équipements réseau</li>
+          </ul>
+        </div>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <form id="contactForm">
-      <input type="text" placeholder="Votre nom" required>
-      <input type="email" placeholder="Votre email" required>
-      <textarea placeholder="Votre message" required></textarea>
-      <button type="submit">Envoyer</button>
-    </form>
-  </section>
+        <div class="experience-item">
+          <h3>Stage – Pôle Technologique El Ghazala / TunisieTelecom : Projet Chatbot IA</h3>
+          <ul>
+            <li>Création d'un chatbot avec intelligence artificielle</li>
+            <li>Développement web avec HTML, CSS et VS Code</li>
+            <li>Renforcement des compétences en programmation web et IA</li>
+            <li>Intégration d'API et traitement du langage naturel</li>
+          </ul>
+        </div>
 
+        <div class="experience-item">
+          <h3>Projet de fin d'études – Système intelligent de détection incendies de forêt</h3>
+          <ul>
+            <li>Développement d'une application web pour visualiser des données en temps réel (Vue.js, Node.js, Chart.js, Firebase)</li>
+            <li>Analyse de données et génération de notifications/alertes automatiques</li>
+            <li>Prototype fonctionnel pour démonstration</li>
+            <li>Intégration de capteurs IoT et communication sans fil</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education">
+      <div class="section-header">
+        <h2>Formation & Certifications</h2>
+      </div>
+      <div class="education-list">
+        <ul>
+          <li><strong>IOT in Revolutionizing Architectural Landscapes</strong> - Certification en IoT et architecture intelligente</li>
+          <li><strong>Innospeed Hackathon</strong> – 1ère & 2ème édition - Participation et développement de solutions innovantes</li>
+          <li><strong>Training Session Industry 4.0</strong> - Formation aux technologies de l'industrie 4.0</li>
+          <li><strong>Innovation Camp</strong> – Injaz Tunisia - Développement de projets entrepreneuriaux</li>
+          <li><strong>Formations complémentaires</strong> - Gestion de temps, travail en équipe, motivation et robotique</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects">
+      <div class="section-header">
+        <h2>Mes Projets</h2>
+      </div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-img">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="project-content">
+            <h3>Système de détection d'incendies IoT</h3>
+            <p>Solution complète de détection d'incendies utilisant l'ESP32, la technologie LoRa et des capteurs de CO/CO₂, avec une interface web en temps réel via Firebase.</p>
+            <div class="project-tags">
+              <span class="project-tag">ESP32</span>
+              <span class="project-tag">LoRa</span>
+              <span class="project-tag">Capteurs</span>
+              <span class="project-tag">Firebase</span>
+              <span class="project-tag">IoT</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-img">
+            <i class="fas fa-globe"></i>
+          </div>
+          <div class="project-content">
+            <h3>Site Web Dynamique</h3>
+            <p>Application web interactive permettant la visualisation en temps réel de données collectées depuis Firebase, avec une interface utilisateur intuitive et réactive.</p>
+            <div class="project-tags">
+              <span class="project-tag">JavaScript</span>
+              <span class="project-tag">Firebase</span>
+              <span class="project-tag">Temps Réel</span>
+              <span class="project-tag">UI/UX</span>
+              <span class="project-tag">Vue.js</span>
+            </div>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-img">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="project-content">
+            <h3>Chatbot IA</h3>
+            <p>Développement d'un chatbot intelligent capable de comprendre et répondre aux requêtes utilisateurs avec traitement du langage naturel.</p>
+            <div class="project-tags">
+              <span class="project-tag">IA</span>
+              <span class="project-tag">Chatbot</span>
+              <span class="project-tag">HTML/CSS</span>
+              <span class="project-tag">JavaScript</span>
+              <span class="project-tag">API</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+      <div class="section-header">
+        <h2>Contact</h2>
+      </div>
+      <div class="contact-container">
+        <div class="contact-info">
+          <h3>Restons en contact</h3>
+          <p>N'hésitez pas à me contacter pour discuter de projets ou de collaborations.</p>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+              <h4>Email</h4>
+              <p>dklmira931@gmail.com</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h4>Localisation</h4>
+              <p>Tunis, Tunisie</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div>
+              <h4>Téléphone</h4>
+              <p>+216 97 836 156</p>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form">
+          <form id="contactForm">
+            <div class="form-group">
+              <input type="text" id="name" placeholder="Votre nom" required>
+            </div>
+            <div class="form-group">
+              <input type="email" id="email" placeholder="Votre email" required>
+            </div>
+            <div class="form-group">
+              <input type="text" id="subject" placeholder="Sujet" required>
+            </div>
+            <div class="form-group">
+              <textarea id="message" placeholder="Votre message" required></textarea>
+            </div>
+            <button type="submit" class="btn">
+              <span class="btn-text">Envoyer le message</span>
+              <div class="loading" style="display: none;"></div>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
   <footer>
-    <p>Connectez-vous avec moi : <a href="https://www.linkedin.com/in/amiradakhli">LinkedIn</a></p>
+    <div class="footer-content">
+      <h3>Amira Dakhli</h3>
+      <p>Développeuse ICT | IoT & Systèmes Embarqués</p>
+      <div class="social-links">
+        <a href="https://www.linkedin.com/in/amiradakhli" class="social-link">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-github"></i>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-twitter"></i>
+        </a>
+        <a href="mailto:dklmira931@gmail.com" class="social-link">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+      <p class="copyright">&copy; 2025 Amira Dakhli. Tous droits réservés.</p>
+    </div>
   </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
+
